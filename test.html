@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTTP Auth Test</title>
+  <meta charset="utf-8" />
+</head>
+<body>
+
+<script src="crypto.js"></script>
+<script src="httpauth.js"></script>
+/*
+Create test-config.js with:
+  var MY_SERVER = ""; // HTTP/HTTPS url to GET
+  var MY_USERNAME="";	// username to use
+  var MY_PASSWORD=""; // password to use
+*/
+<script src="test-config.js"></script>
+
+<script>
+function log(msg) { console.log(msg); }
+function dump(name, value) { console.log(name+': '+JSON.stringify(value)); }
+
+var digest = new AuthCalc(MY_USERNAME, MY_PASSWORD);
+
+function newRequest() {
+	return new Promise((resolve, reject) => {
+		var xhr = new XMLHttpRequest();
+		dump("xhr.open", xhr.open("GET", MY_SERVER, true)); //async
+		dump("digest.sign", digest.sign(xhr, {url: MY_SERVER, type: "GET"}));
+		xhr.onreadystatechange = function() {
+			if(xhr.readyState !== XMLHttpRequest.DONE)
+				return;
+			var status = xhr.status;
+			log("xhr "+status+": "+xhr.responseText);
+			if (status === 0 || (status >= 200 && status < 400))
+				resolve(xhr);
+			else
+				reject(xhr);
+		}
+		dump("xhr.send", xhr.send());
+	});
+}
+
+//Sends XHR request using the current digest context (if any)
+function sendRequest() {
+	return newRequest()
+		.catch((xhr) => {
+			//Digest required? Reinitialize the digest context
+			if ((xhr.status === 401 || xhr.status === 407)) {
+				log("Reinitializing the digest context...");
+				digest.updateServerResponse(xhr);
+				return sendRequest(); //again
+			}
+			return Promise.reject(xhr);
+		})
+}
+
+
+function initPage() {
+	log("Sending the request for the first time");
+	log("This will fail digest and trigger digest reinit and resend internally");
+	var xhr = sendRequest()
+		.then(function() {
+			log("Sending the request again, inheriting the context");
+			log("There should be no digest reinit this time");
+			return sendRequest();
+		});
+}
+
+initPage();
+</script>
+</body>
+</html>
