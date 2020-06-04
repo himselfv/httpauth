@@ -144,8 +144,11 @@ AuthCalc.prototype.AUTH_PARAMS = null;
 AuthCalc.prototype.parseWWWAuthenticateHeader = function(header) {
     var params = {};
     params[null] = header.split(' ').shift(); //challenge type
-    var regex = /([^"',\s]*)="([^"]*)/gm;
+    var regex = new RegExp('([^"\',\\s]*)="([^"]*)', 'gm');
     var result = null;
+	//prevent minify from optimizing out the variable and placing regex
+    //inside the loop as a literal (=> no state => endless loop)
+    regex._keepobj = '';
     do {
         result = regex.exec(header);
         if (result !== null) {
