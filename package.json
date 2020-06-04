@@ -1,0 +1,27 @@
+{
+  "name": "httpauth",
+  "version": "1.0.0",
+  "description": "HTTP Basic and Digest authentication helper",
+  "main": "httpauth.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/himselfv/httpauth.git"
+  },
+  "keywords": [
+    "http",
+    "basic",
+    "digest",
+    "authorization",
+    "authentication",
+    "www-authenticate"
+  ],
+  "author": "me@boku.ru",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/himselfv/httpauth/issues"
+  },
+  "homepage": "https://github.com/himselfv/httpauth#readme"
+}
