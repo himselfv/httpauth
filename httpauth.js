@@ -19,6 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+if (typeof exports == 'undefined')
+	exports = {};
 
 /*
 HTTP Authentication Calculator (Basic and Digest)
@@ -97,6 +99,7 @@ AuthCalc = function(username, password) {
 	this.username = username;
 	this.password = password;
 };
+exports.AuthCalc = AuthCalc;
 /*
 Override to supply credentials on demand instead of storing them inside AuthCalc.
 Returns an Object that must contain a 'username' and 'password' key/value pairs.
