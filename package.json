@@ -23,5 +23,23 @@
   "bugs": {
     "url": "https://github.com/himselfv/httpauth/issues"
   },
-  "homepage": "https://github.com/himselfv/httpauth#readme"
+  "homepage": "https://github.com/himselfv/httpauth#readme",
+  "dependencies": {
+    "crypto-js": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.10.1",
+    "jest": "^26.0.1"
+  },
+  "jest": {},
+  "babel": {
+    "env": {
+      "test": {
+        "comments": true,
+        "plugins": ["@babel/plugin-transform-modules-commonjs"]
+      }
+    }
+  }
 }

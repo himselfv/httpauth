@@ -19,8 +19,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
+//Under NodeJS properly import/export stuff, otherwise you must load crypto.js manually.
 if (typeof exports == 'undefined')
 	exports = {};
+if (typeof require != 'undefined') {
+	let CryptoJS = require('crypto-js');
+	global['CryptoJS'] = CryptoJS;
+}
 
 /*
 HTTP Authentication Calculator (Basic and Digest)
@@ -95,7 +101,7 @@ Q: Should you tell AuthCalc if the handshake has failed? No! We don't care; if t
 Constructs a new AuthCalc.
 Username and password can either be provided directly or by overriding getCredentials().
 */
-AuthCalc = function(username, password) {
+function AuthCalc(username, password) {
 	this.username = username;
 	this.password = password;
 };
