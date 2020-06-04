@@ -20,12 +20,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-//Under NodeJS properly import/export stuff, otherwise you must load crypto.js manually.
+//Under NodeJS properly import/export stuff
 if (typeof exports == 'undefined')
 	exports = {};
 if (typeof require != 'undefined') {
-	let CryptoJS = require('crypto-js');
-	global['CryptoJS'] = CryptoJS;
+	const puremd5 = require('pure-md5');
+	global['MD5'] = puremd5.md5;
+} else {
+  //In pure JS you must manually provide MD5(), e.g. by loading cryptojs-min.js
+  if (typeof CryptoJS != 'undefined')
+	  MD5 = CryptoJS.MD5;
 }
 
 /*
@@ -238,7 +242,7 @@ AuthCalc.prototype.createAuthorizationHeaderDigest = function(req) {
 		if (!auth || (!auth.username && !auth.password))
 			return null; //no credentials supplied
 		this.AUTH_USERNAME = auth.username;
-		this.AUTH_HA1 = CryptoJS.MD5(auth.username+':'+params.realm+':'+auth.password);
+		this.AUTH_HA1 = MD5(auth.username+':'+params.realm+':'+auth.password);
     }
     
 	//If the algorithm is md5-sess we should further MD5 this:
@@ -248,7 +252,7 @@ AuthCalc.prototype.createAuthorizationHeaderDigest = function(req) {
     var algorithm = params.algorithm;
     if (algorithm !== undefined && algorithm.toLowerCase() === 'md5-sess') {
         cnonce = this.generateCnonce();
-        ha1 = CryptoJS.MD5(this.AUTH_HA1 + ':' + params.nonce + ':' + cnonce);
+        ha1 = MD5(this.AUTH_HA1 + ':' + params.nonce + ':' + cnonce);
 	} else
 		ha1 = this.AUTH_HA1;
 
@@ -256,16 +260,16 @@ AuthCalc.prototype.createAuthorizationHeaderDigest = function(req) {
     var ha2, response;
     if (clientQop === 'auth-int') {
         var body = req.data ? req.data : '';
-        ha2 = CryptoJS.MD5(req.type + ':' + req.url + ':' + CryptoJS.MD5(body));
+        ha2 = MD5(req.type + ':' + req.url + ':' + MD5(body));
     }
     else {
-        ha2 = CryptoJS.MD5(req.type + ':' + req.url);
+        ha2 = MD5(req.type + ':' + req.url);
     }
 
     //Response Calculation
     var response, nc;
     if (params.qop === undefined) {
-        response = CryptoJS.MD5(ha1 + ':' + params.nonce + ':' + ha2);
+        response = MD5(ha1 + ':' + params.nonce + ':' + ha2);
     }
     else {
         if (cnonce === undefined)
@@ -273,7 +277,7 @@ AuthCalc.prototype.createAuthorizationHeaderDigest = function(req) {
             cnonce = this.generateCnonce();
         nc = this.nonce_count.toString(16).padStart(8, '0'); //00000001
         this.nonce_count += 1;
-        response = CryptoJS.MD5(ha1 + ':' + params.nonce + ':' 
+        response = MD5(ha1 + ':' + params.nonce + ':' 
                 + nc + ':' + cnonce + ':' + clientQop + ':' + ha2);
     }
 

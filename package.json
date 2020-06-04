@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/himselfv/httpauth#readme",
   "dependencies": {
-    "crypto-js": "^4.0.0"
+    "pure-md5": "^0.1.9"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.1",
@@ -38,7 +38,9 @@
     "env": {
       "test": {
         "comments": true,
-        "plugins": ["@babel/plugin-transform-modules-commonjs"]
+        "plugins": [
+          "@babel/plugin-transform-modules-commonjs"
+        ]
       }
     }
   }
